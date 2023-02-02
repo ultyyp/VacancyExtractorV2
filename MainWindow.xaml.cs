@@ -65,7 +65,7 @@ namespace VacancyExtractorV2
 
             StatusLabel.Content = "Done!";
             //AmmountLabel.Content = "Vacancies: " + VacancyGrid.Items.Count.ToString();
-            AmmountLabel.Content = "Vacancies: " + cb.Count().ToString() + "/" + cb.Distinct().Count().ToString() + "/" +VacancyGrid.Items.Count.ToString();
+            AmmountLabel.Content = "Vacancies: " + cb.Count().ToString() + "/" + cb.Distinct().Count().ToString() + "/" + VacancyGrid.Items.Count.ToString();
 
 
 
