@@ -65,7 +65,7 @@ namespace VacancyExtractorV2
 
             StatusLabel.Content = "Done!";
             //AmmountLabel.Content = "Vacancies: " + VacancyGrid.Items.Count.ToString();
-            AmmountLabel.Content = "Vacancies: " + cb.Count().ToString() + "/" + cb.Distinct().Count().ToString();
+            AmmountLabel.Content = "Vacancies: " + cb.Count().ToString() + "/" + cb.Distinct().Count().ToString() + VacancyGrid.Items.Count.ToString();
 
 
 
@@ -78,15 +78,17 @@ namespace VacancyExtractorV2
             for(int i = 0; i< ints.Length; i++)
             {
                 ints[i] = i;
-            }
-
+            };
+            
+            var options = new ParallelOptions();
+            options.MaxDegreeOfParallelism = 20;
+            var token = options.CancellationToken;
             
 
-            var mainTask = Task.Run(() => {
 
-                Parallel.ForEach(ints, (line, state, index) =>
+                await Parallel.ForEachAsync(ints, options, async (index, token) =>
                 {
-                    var task = Task.Run(async() => { 
+                    
 
                     //StatusLabel.Content = "Extracting... " + "(" + i.ToString() + "/" + totalPages.ToString() + ")";
 
@@ -129,15 +131,8 @@ namespace VacancyExtractorV2
                         //{
                         //    StatusLabel.Content = "Done!";
                         //}
-                    });
 
-                    Task.WaitAll(task);
                 });
-
-            });
-
-            await Task.WhenAll(mainTask);
-
 
             return concBag;
 
