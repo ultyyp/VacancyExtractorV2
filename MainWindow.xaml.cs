@@ -65,7 +65,7 @@ namespace VacancyExtractorV2
 
             StatusLabel.Content = "Done!";
             //AmmountLabel.Content = "Vacancies: " + VacancyGrid.Items.Count.ToString();
-            AmmountLabel.Content = "Vacancies: " + cb.Count().ToString() + "/" + cb.Distinct().Count().ToString() + "/" + VacancyGrid.Items.Count.ToString();
+            AmmountLabel.Content = "Vacancies: " + VacancyGrid.Items.Count.ToString();
 
 
 
@@ -74,25 +74,26 @@ namespace VacancyExtractorV2
         public async Task<ConcurrentBag<Vacancy>> extractVacancies(int totalPages)
         {
             ConcurrentBag<Vacancy> concBag = new ConcurrentBag<Vacancy>();
-            int[] ints = new int[totalPages];
-            for(int i = 0; i< ints.Length; i++)
+            List<string> urls = new List<string>();
+            
+            for(int i=1; i<=totalPages; i++)
             {
-                ints[i] = i;
-            };
+                urls.Add("https://proglib.io/vacancies/all?workType=all&workPlace=all&experience=&salaryFrom=&page=" + i.ToString());
+            }
             
             var options = new ParallelOptions();
-            options.MaxDegreeOfParallelism = 20;
+            options.MaxDegreeOfParallelism = 50;
             var token = options.CancellationToken;
             
 
 
-                await Parallel.ForEachAsync(ints, options, async (index, token) =>
+                await Parallel.ForEachAsync(urls, options, async (currentUrl, token) =>
                 {
-                    
+
 
                     //StatusLabel.Content = "Extracting... " + "(" + i.ToString() + "/" + totalPages.ToString() + ")";
 
-                    var loopurl = "https://proglib.io/vacancies/all?workType=all&workPlace=all&experience=&salaryFrom=&page=" + index.ToString();
+                    var loopurl = currentUrl;
                     using var loopclient = new HttpClient();
                     var loopbody = await loopclient.GetStringAsync(loopurl);
 
